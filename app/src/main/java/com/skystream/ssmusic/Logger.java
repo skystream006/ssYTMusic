@@ -39,7 +39,7 @@ public final class Logger {
     static final String LOG_FILE_NAME = "ssmusic.log";
     static final String LOG_BACKUP_FILE_NAME = "ssmusic-previous.log";
 
-    private static final String LOGCAT_TAG = "ssMusic";
+    private static final String LOGCAT_TAG = "ssYTMusic";
     private static final String ENABLE_LOGGING_MESSAGE =
             "Enable logging in settings to capture diagnostics.";
     private static final Charset UTF_8 = Charset.forName("UTF-8");

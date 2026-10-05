@@ -76,7 +76,7 @@ final class UpdateClient {
             connection.setInstanceFollowRedirects(false);
             connection.setConnectTimeout(15000);
             connection.setReadTimeout(20000);
-            connection.setRequestProperty("User-Agent", "ssMusic-Android-Updater");
+            connection.setRequestProperty("User-Agent", "ssYTMusic-Android-Updater");
             connection.setRequestProperty("Accept", metadata
                     ? "application/vnd.github+json" : "application/octet-stream");
             connection.setRequestProperty("Accept-Encoding", "identity");

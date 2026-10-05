@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -17,6 +18,20 @@ import org.w3c.dom.NodeList;
 
 public class PreferencesLayoutTest {
     private static final String ANDROID = "http://schemas.android.com/apk/res/android";
+
+    @Test
+    public void appBrandingUsesRenamedAppInLabelsAndInstructions() throws Exception {
+        Document strings = readResource("values/strings.xml");
+        for (String name : new String[]{"app_name", "update_install_permission",
+                "update_install_denied", "supported_links_summary",
+                "supported_links_settings_failed", "log_share_title",
+                "playback_notification_title"}) {
+            Element resource = findByName(strings, "string", name);
+            assertTrue(name, resource.getTextContent().contains("ssYTMusic"));
+        }
+        assertEquals("ssYTMusic", findByName(strings, "string", "app_name").getTextContent());
+        assertFalse(strings.getDocumentElement().getTextContent().contains("ssMusic"));
+    }
 
     @Test
     public void settingsButtonClearsBottomPlaybackAndNavigationArea() throws Exception {
@@ -234,6 +249,17 @@ public class PreferencesLayoutTest {
         factory.setNamespaceAware(true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         return factory.newDocumentBuilder().parse(new File("src/main/res", path));
+    }
+
+    private static Element findByName(Document document, String tag, String name) {
+        NodeList elements = document.getElementsByTagName(tag);
+        for (int i = 0; i < elements.getLength(); i++) {
+            Element element = (Element) elements.item(i);
+            if (name.equals(element.getAttribute("name"))) {
+                return element;
+            }
+        }
+        throw new AssertionError("Missing resource: " + name);
     }
 
     private static Element findById(Document document, String id) {

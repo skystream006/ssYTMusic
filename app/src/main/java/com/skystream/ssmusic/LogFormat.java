@@ -53,7 +53,7 @@ public final class LogFormat {
                 .append(' ')
                 .append(level == null || level.isEmpty() ? "I" : level)
                 .append('/')
-                .append(tag == null || tag.isEmpty() ? "ssMusic" : sanitize(tag))
+                .append(tag == null || tag.isEmpty() ? "ssYTMusic" : sanitize(tag))
                 .append(": ")
                 .append(sanitize(message));
         String caller = callerLocation(callerTrace);

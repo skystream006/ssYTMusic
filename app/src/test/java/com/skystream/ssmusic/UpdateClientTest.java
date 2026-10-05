@@ -143,7 +143,7 @@ public class UpdateClientTest {
     public void rejectsInvalidAssetSizesBeforeConnecting() throws Exception {
         for (long size : new long[]{-1, 0, UpdatePolicy.MAX_APK_BYTES + 1}) {
             try {
-                new UpdateClient().download("https://github.com/skystream006/ssMusic/"
+                new UpdateClient().download("https://github.com/skystream006/ssYTMusic/"
                         + "releases/download/v1/app.apk", size, directory);
                 fail("Accepted invalid asset size");
             } catch (IOException expected) {
