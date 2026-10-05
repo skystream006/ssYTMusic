@@ -44,7 +44,7 @@ public class LogFormatTest {
     @Test
     public void usesDefaultsForMissingLevelAndTag() {
         assertTrue(LogFormat.entry(0L, null, null, "message", null, null)
-                .contains("I/ssMusic: message"));
+                .contains("I/ssYTMusic: message"));
     }
 
     @Test

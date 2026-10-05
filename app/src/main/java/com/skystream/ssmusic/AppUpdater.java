@@ -341,7 +341,7 @@ public final class AppUpdater {
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "application/vnd.android.package-archive")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.setClipData(ClipData.newRawUri("ssMusic update", uri));
+            intent.setClipData(ClipData.newRawUri("ssYTMusic update", uri));
             activity.startActivity(intent);
             installRequested = false;
             preferences.edit().putBoolean("pending", false)

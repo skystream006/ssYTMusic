@@ -12,6 +12,11 @@ import org.junit.Test;
 
 public class BuildVersionTest {
     @Test
+    public void renamePreservesInstalledApplicationId() {
+        assertEquals("com.skystream.ssmusic", BuildConfig.APPLICATION_ID);
+    }
+
+    @Test
     public void builtVersionAdvancesWithFirstParentHistory() throws Exception {
         Process process = new ProcessBuilder("git", "rev-list", "--first-parent", "--count",
                 "23d6b35ce12bad18592c85b3d6ff48f9e9ba8092..HEAD")

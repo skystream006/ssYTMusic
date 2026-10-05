@@ -1,6 +1,6 @@
-# ssMusic
+# ssYTMusic
 
-ssMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It opens directly to `https://music.youtube.com/` with no address bar, keeps normal WebView cookies/history, blocks common ad and tracking requests, and provides an in-app settings panel for:
+ssYTMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It opens directly to `https://music.youtube.com/` with no address bar, keeps normal WebView cookies/history, blocks common ad and tracking requests, and provides an in-app settings panel for:
 
 - mobile or desktop user agent mode dropdown
 - system, light, or dark app theme dropdown
@@ -18,7 +18,7 @@ collapsed. **Logging** is a separate section, expanded whenever settings is open
 enabled and collapsed otherwise. Tap either heading to expand or collapse its controls.
 **View log**, **Share log**, and **Clear log** appear together in one row.
 
-The YouTube Music wordmark in the page is replaced with the bundled ssMusic logo, which is served
+The YouTube Music wordmark in the page is replaced with the bundled ssYTMusic logo, which is served
 to the WebView from a synthetic same-origin path instead of the network.
 
 In the expanded media view, swipe down on the video area to compact the player, up to
@@ -28,7 +28,7 @@ Taps and player controls retain their normal behavior.
 
 The experimental **Compact player** shrinks the existing player page above the transport bar and exposes the
 browse surface; **Expand player** restores its presentation. Dedicated native minimize/toggle
-buttons use this app presentation while expanded. ssMusic does not replace/reload media, change
+buttons use this app presentation while expanded. ssYTMusic does not replace/reload media, change
 YouTube Music's internal player state, or resume an intentional pause. Track changes can continue
 in compact mode while the same player remains expanded internally. If navigation changes that state,
 the player is replaced, or fullscreen begins, compact presentation is removed rather than forcing
@@ -42,7 +42,7 @@ restrictions. Live playback, browsing, and restricted-content behavior require d
 
 ## Supported links
 
-To open YouTube Music links in ssMusic, expand **Advanced** and choose **Open supported links** in the settings
+To open YouTube Music links in ssYTMusic, expand **Advanced** and choose **Open supported links** in the settings
 panel, enable the Android setting, and select `music.youtube.com` if prompted. Android 12+
 opens the app's link settings directly; older devices (or devices without that screen)
 open App info, where **Open by default** can be configured. Android requires user approval;
@@ -54,10 +54,10 @@ In Preferences, choose **Login to Music Server** and enter your server's HTTPS
 `PASSKEY_ORIGIN`, including its port (for example, `https://music.example.com:4000`).
 Register a passkey and obtain account approval in the server's web UI first.
 The address must be reachable from your phone and its certificate trusted by both
-Android and your browser; ssMusic never bypasses TLS verification.
+Android and your browser; ssYTMusic never bypasses TLS verification.
 
 Login opens in your external browser for passkey authorization, then returns through
-`com.ssytdlp.app:/oauth/callback`. If Android asks which app to use, choose ssMusic.
+`com.ssytdlp.app:/oauth/callback`. If Android asks which app to use, choose ssYTMusic.
 The server currently requires this shared callback scheme; another installed
 ssYTDLP client may also claim it. PKCE protects the authorization code.
 Login state and sessions are encrypted with Android Keystore-backed keys in
@@ -98,13 +98,20 @@ controls or skipping tracks; radio mixes and standalone song links are not allow
 
 Kid mode requires a current Android System WebView with document-start script support.
 It is an app-level restriction, not a device parental-control or explicit-content filter:
-it does not rate songs, protect other apps, or prevent someone from clearing ssMusic's
+it does not rate songs, protect other apps, or prevent someone from clearing ssYTMusic's
 Android app data. Restrictions depend on YouTube Music's page structure; if playlist
 membership cannot be verified, playback is blocked rather than allowing an unknown song.
 
 ## App updates
 
-On a fresh app launch, ssMusic checks GitHub for a newer stable release and shows
+The app and repository are now named **ssYTMusic**. The Android application ID remains
+`com.skystream.ssmusic` so compatible, same-key APKs update existing installations rather
+than installing a separate app. Internal preference, storage, and bridge identifiers are
+unchanged to preserve settings, sign-in state, and logs.
+
+On a fresh app launch, ssYTMusic checks the
+[ssYTMusic releases](https://github.com/skystream006/ssYTMusic/releases/latest)
+for a newer stable release and shows
 **Update available to version {version}** when one exists. This automatic check does
 not download or install anything.
 
@@ -113,7 +120,7 @@ shows **App is up to date with latest version {version}**. If behind, the app do
 the release APK into its private storage, showing a progress bar and downloaded/total KB
 below the update button, then opens Android's installer. Closing settings does not stop
 the download; reopening settings shows its current progress. On Android 8+,
-allow installation from ssMusic if prompted, then return to the app to continue.
+allow installation from ssYTMusic if prompted, then return to the app to continue.
 Android requires your confirmation and a compatible signing key; updates are never
 installed silently. Checking and downloading require an internet connection.
 
@@ -177,7 +184,7 @@ resume without reopening the app. Audio focus remains managed by WebView: calls 
 apps can still interrupt playback. Force-stopping the app or device-specific battery restrictions
 can stop playback and remove its notification.
 
-Instead of automatically confirming **Are you still listening?**, ssMusic refreshes the page
+Instead of automatically confirming **Are you still listening?**, ssYTMusic refreshes the page
 when the sixth song starts without user interaction, including while the app is in the background.
 A native check every five seconds backs up song-start events while the app is not interactive.
 Refreshing or interacting with the page,
@@ -209,7 +216,7 @@ To build a release manually, open **Actions → Manual Android Release → Run w
 This separate, manual-only workflow always checks out the latest `main` and uses its
 Git-derived version without incrementing it again. Rebuilding the same commit uses
 the same version in either workflow. It runs tests,
-uploads a debug-signed APK artifact, and publishes a new release tagged
+uploads a debug-signed `ssYTMusic-v<versionName>.apk` artifact, and publishes a new release tagged
 `v<versionName>` with generated release notes, marked as latest.
 If that version's release already exists, it is left unchanged; the rebuilt APK is
 still available in the workflow artifacts. Merge new changes into `main` when you

@@ -43,10 +43,21 @@ public class UpdatePolicyTest {
 
     @Test
     public void allowsOnlyRepositoryApkAsInitialDownload() throws Exception {
-        assertTrue(allowed("https://github.com/skystream006/ssMusic/releases/download/v1/app.apk", true));
-        assertFalse(allowed("https://github.com/other/ssMusic/releases/download/v1/app.apk", true));
-        assertFalse(allowed("https://github.com/skystream006/ssMusic/releases/download/v1/app.zip", true));
+        assertTrue(allowed("https://github.com/skystream006/ssYTMusic/releases/download/v1/ssYTMusic-v1.apk", true));
+        assertTrue(allowed("https://github.com/skystream006/ssYTMusic/releases/download/v1/ssMusic-v1.apk", true));
+        assertFalse(allowed("https://github.com/other/ssYTMusic/releases/download/v1/app.apk", true));
+        assertFalse(allowed("https://github.com/skystream006/ssYTMusic/releases/download/v1/app.zip", true));
         assertFalse(allowed("https://release-assets.githubusercontent.com/file.apk", true));
+    }
+
+    @Test
+    public void rejectsOldRepositoryAndLookalikesEvenOnRedirect() throws Exception {
+        for (String repository : new String[]{"ssMusic", "ssYTMusic-other", "other"}) {
+            String url = "https://github.com/skystream006/" + repository
+                    + "/releases/download/v1/app.apk";
+            assertFalse(url, allowed(url, true));
+            assertFalse(url, allowed(url, false));
+        }
     }
 
     @Test
@@ -66,14 +77,21 @@ public class UpdatePolicyTest {
                 "https://objects.githubusercontent.com:444/file",
                 "https://objects.githubusercontent.com/file#fragment",
                 "https://raw.githubusercontent.com/file",
-                "https://github.com/skystream006/ssMusic/releases/download/v1/../app.apk"}) {
+                "https://github.com/skystream006/ssYTMusic/releases/download/v1/../app.apk"}) {
             assertFalse(url, allowed(url, false));
         }
     }
 
     @Test
     public void metadataRemainsOnExactEndpoint() throws Exception {
+        assertEquals("https://api.github.com/repos/skystream006/ssYTMusic/releases/latest",
+                UpdatePolicy.LATEST_URL);
         assertTrue(UpdatePolicy.isAllowedUrl(new URL(UpdatePolicy.LATEST_URL), true, true));
+        assertTrue(UpdatePolicy.isAllowedUrl(new URL(UpdatePolicy.LATEST_URL), true, false));
+        assertFalse(UpdatePolicy.isAllowedUrl(new URL(
+                "https://api.github.com/repos/skystream006/ssMusic/releases/latest"), true, true));
+        assertFalse(UpdatePolicy.isAllowedUrl(new URL(
+                "https://api.github.com/repos/skystream006/ssMusic/releases/latest"), true, false));
         assertFalse(UpdatePolicy.isAllowedUrl(new URL(
                 "https://api.github.com/repos/other/project/releases/latest"), true, false));
         assertFalse(UpdatePolicy.isAllowedUrl(new URL(

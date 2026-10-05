@@ -8,10 +8,10 @@ import java.net.URL;
 /** Validation shared by release discovery and APK installation. */
 final class UpdatePolicy {
     static final String LATEST_URL =
-            "https://api.github.com/repos/skystream006/ssMusic/releases/latest";
+            "https://api.github.com/repos/skystream006/ssYTMusic/releases/latest";
     static final long MAX_APK_BYTES = 100L * 1024 * 1024;
     static final int MAX_METADATA_BYTES = 1024 * 1024;
-    private static final String DOWNLOAD_PATH = "/skystream006/ssMusic/releases/download/";
+    private static final String DOWNLOAD_PATH = "/skystream006/ssYTMusic/releases/download/";
 
     private UpdatePolicy() {}
 

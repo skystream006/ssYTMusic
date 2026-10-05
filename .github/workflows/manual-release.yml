@@ -46,13 +46,13 @@ jobs:
       - name: Rename APK
         env:
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
-        run: cp app/build/outputs/apk/debug/app-debug.apk "ssMusic-v${VERSION_NAME}.apk"
+        run: cp app/build/outputs/apk/debug/app-debug.apk "ssYTMusic-v${VERSION_NAME}.apk"
 
       - name: Upload APK
         uses: actions/upload-artifact@v6
         with:
-          name: ssMusic-v${{ steps.version.outputs.version_name }}
-          path: ssMusic-v${{ steps.version.outputs.version_name }}.apk
+          name: ssYTMusic-v${{ steps.version.outputs.version_name }}
+          path: ssYTMusic-v${{ steps.version.outputs.version_name }}.apk
           if-no-files-found: error
 
       - name: Publish latest GitHub release
@@ -66,8 +66,8 @@ jobs:
             echo "Release $tag already exists; leaving it unchanged. The rebuilt APK is available as a workflow artifact."
             exit 0
           fi
-          gh release create "$tag" "ssMusic-v${VERSION_NAME}.apk" \
+          gh release create "$tag" "ssYTMusic-v${VERSION_NAME}.apk" \
             --target "$(git rev-parse HEAD)" \
-            --title "ssMusic ${VERSION_NAME}" \
+            --title "ssYTMusic ${VERSION_NAME}" \
             --generate-notes \
             --latest

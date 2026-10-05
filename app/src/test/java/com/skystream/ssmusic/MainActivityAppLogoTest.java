@@ -37,6 +37,9 @@ public class MainActivityAppLogoTest {
         assertTrue(script.contains("ytmusic-logo"));
         assertTrue(script.contains(MainActivity.APP_LOGO_PATH));
         assertTrue(script.contains("location.origin"));
+        assertTrue(script.contains("img.alt='ssYTMusic'"));
+        assertTrue(script.contains("image.alt='ssYTMusic'"));
+        assertFalse(script.contains("alt='ssMusic'"));
     }
 
     @Test
