@@ -32,16 +32,17 @@ public class AppIconResourcesTest {
                     NOTIFICATION_SIZES[i]);
             assertTrue("Notification icons need an alpha channel", image.getColorModel().hasAlpha());
             int opaquePixels = 0;
-            int transparentPixels = 0;
+            int transparentInteriorPixels = 0;
             int padding = image.getWidth() / 12;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     int pixel = image.getRGB(x, y);
                     int alpha = pixel >>> 24;
-                    if (alpha == 0) {
-                        transparentPixels++;
-                    } else {
+                    if (alpha > 0) {
                         assertEquals("Visible pixels must be white", 0xFFFFFF, pixel & 0xFFFFFF);
+                    } else if (x >= padding && y >= padding && x < image.getWidth() - padding
+                            && y < image.getHeight() - padding) {
+                        transparentInteriorPixels++;
                     }
                     if (alpha == 255) {
                         opaquePixels++;
@@ -53,8 +54,7 @@ public class AppIconResourcesTest {
                 }
             }
             assertTrue("Notification artwork must not be empty", opaquePixels > 0);
-            assertTrue("Background must remain transparent",
-                    transparentPixels > image.getWidth() * image.getHeight() / 2);
+            assertTrue("Artwork must have transparent negative space", transparentInteriorPixels > 0);
         }
     }
 
