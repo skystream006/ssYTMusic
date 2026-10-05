@@ -109,6 +109,10 @@ The app and repository are now named **ssYTMusic**. The Android application ID r
 than installing a separate app. Internal preference, storage, and bridge identifiers are
 unchanged to preserve settings, sign-in state, and logs.
 
+Older builds still check the previous repository address and may reject GitHub's rename
+redirects. If their update check fails, download the latest APK from the renamed repository's
+releases and install it over the existing app once; do not uninstall and lose your app data.
+
 On a fresh app launch, ssYTMusic checks the
 [ssYTMusic releases](https://github.com/skystream006/ssYTMusic/releases/latest)
 for a newer stable release and shows
