@@ -13,6 +13,9 @@ ssYTMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It
 - password-protected **Kid mode** for playlist-only listening
 - browser-based **Login to Music Server** and playlist/song jobs for [ssYTDLP_Server](https://github.com/skystream006/ssYTDLP_Server)
 
+System Back (button or gesture) and the settings Back button navigate through page history.
+When no previous page is available, they open Home (Library in Kid mode) instead of exiting the app.
+
 Kid mode, supported links, and Stats for nerds are grouped under **Advanced**, which starts
 collapsed. **Logging** is a separate section, expanded whenever settings is opened with logging
 enabled and collapsed otherwise. Tap either heading to expand or collapse its controls.
