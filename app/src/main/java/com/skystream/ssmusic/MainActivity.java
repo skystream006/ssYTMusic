@@ -46,6 +46,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -891,6 +892,12 @@ public class MainActivity extends AppCompatActivity {
         kidModeHomeButton = findViewById(R.id.kid_mode_home_button);
         kidModeHomeButton.setOnClickListener(v -> loadUrl(KidModeNavigation.LIBRARY_URL));
         configureWebView();
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                goHistory(false);
+            }
+        });
         registerMediaCommandReceiver();
         settingsButton.setVisibility(View.VISIBLE);
         requestAppPermissions();
@@ -1021,17 +1028,6 @@ public class MainActivity extends AppCompatActivity {
         Logger.event(TAG, "onNewIntent, target: " + target);
         if (target != null) {
             loadUrl(isKidModeEnabled() ? KidModeNavigation.LIBRARY_URL : target);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        int steps = historySteps(false);
-        Logger.event(TAG, "Back pressed, history steps: " + steps);
-        if (steps != 0) {
-            webView.goBackOrForward(steps);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -1619,6 +1615,8 @@ public class MainActivity extends AppCompatActivity {
         Logger.event(TAG, (forward ? "Forward" : "Back") + " navigation, steps: " + steps);
         if (steps != 0) {
             webView.goBackOrForward(steps);
+        } else if (!forward) {
+            loadUrl(Preferences.homeUrl());
         }
     }
 
