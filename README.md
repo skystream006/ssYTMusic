@@ -229,3 +229,9 @@ If that version's release already exists, it is left unchanged; the rebuilt APK 
 still available in the workflow artifacts. Merge new changes into `main` when you
 need a new release. Pull request artifact versions are previews, not reserved release
 versions; the final version is calculated from the merged commit on `main`.
+
+To remove older releases, open **Actions → Cleanup Releases → Run workflow**.
+This manual-only workflow keeps the five most recent releases across all pages,
+including prereleases and drafts, ordered by publication time (creation time for
+unpublished drafts). It deletes all older releases and their assets, but leaves
+Git tags unchanged. Repositories with five or fewer releases are unchanged.
