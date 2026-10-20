@@ -1,6 +1,6 @@
 ---
 name: webview-shell
-description: Use for WebView browsing, native Home and history, site scope and account user agents, permissions, native settings composition, branding, ad scripts, or primary-container pointer recovery.
+description: Use for WebView browsing, native Home and history, site scope and account user agents, permissions, themes, native settings composition, branding, ad scripts, or primary-container pointer recovery.
 ---
 
 # WebView shell

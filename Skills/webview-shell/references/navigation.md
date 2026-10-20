@@ -4,6 +4,7 @@
 
 - [MainActivity](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/MainActivity.java): `onCreate` URL-selection/back-callback section; `onNewIntent`; `urlFromIntent`; `loadUrl`; `prepareForUrl`; `goHistory`; `historySteps`; `MusicWebViewClient.handleUrl`.
 - [SiteScope](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/SiteScope.java): `normalizeInAppUrl`, `isGoogleAccountUrl`, `isPlaybackUrl`.
+- [Urls](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/Urls.java): general parsing helpers `hostOf`, `pathOf`, `queryParameterOf`. These extract components, not a complete origin-validation policy; thumbnail trust helpers in the same file belong to playback.
 - [Preferences](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/Preferences.java): `homeUrl`, `restoreUrl`, `userAgent`.
 - [NavigationHistory](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/NavigationHistory.java): `backSteps`, `forwardSteps`, `normalize`.
 - For permissions, read only `configureWebView`, `applyUserAgentForUrl`, `grantWebPermissionsIfAllowed`, `isTrustedPermissionOrigin`, and `onRequestPermissionsResult` in the activity.

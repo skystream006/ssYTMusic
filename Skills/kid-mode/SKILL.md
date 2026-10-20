@@ -11,4 +11,6 @@ Kid mode is authoritative for restrictions. Native URL admission is necessary bu
 
 Keep password derivation off the UI thread, credentials out of page bridges, and state changes contingent on successful persistence. Retain document-start feature gating and fail-closed navigation.
 
+Normally exclude unrelated server authentication/storage, updater/release workflows, and diagnostics internals.
+
 Find the reference's named symbols before reading the shared activity; do not load its whole file. Consult [playback](/home/runner/work/ssYTMusic/ssYTMusic/Skills/playback/SKILL.md) when changing transport, swipe dispatch, compact presentation, thumbnail controls, or playback restoration. Presentation must not weaken policy. Consult [webview-shell](/home/runner/work/ssYTMusic/ssYTMusic/Skills/webview-shell/SKILL.md) only when shared navigation or native settings/overlay composition changes. Route unrelated integrations through [repo-router](/home/runner/work/ssYTMusic/ssYTMusic/Skills/repo-router/SKILL.md); do not expand this task into those domains.
