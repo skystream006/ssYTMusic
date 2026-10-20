@@ -1,0 +1,27 @@
+# Native settings and page shell
+
+## Source anchors
+
+- [MainActivity](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/MainActivity.java): `showPreferences`, `setAdvancedExpanded`, `applyTheme`; `AD_HIDING_SCRIPT`, `OPEN_APP_HIDING_SCRIPT`, `AD_JSON_PRUNE_SCRIPT`, `APP_LOGO_SCRIPT`; `injectPageScripts`, `pointerEventsScript`, `scheduleAppLogoReinjection`, `appLogoBytes`, `isAppLogoRequest`, and `MusicWebViewClient.interceptRequest`.
+- [Settings layout](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/layout/dialog_preferences.xml): theme/site-mode rows, `advanced_button`/`advanced_settings`, `navigation_bar`, and placement of domain-owned panels.
+- [Header layout](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/layout/preferences_header.xml): title, version, update-control composition. [Activity layout](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/layout/activity_main.xml): native settings/Home placement.
+- [Strings](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/values/strings.xml): `app_name`, theme/site-mode labels and accessibility descriptions; inspect only changed entries.
+- For icon artwork only: [launcher](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/mipmap-mdpi/ic_launcher.png), [round launcher](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/mipmap-mdpi/ic_launcher_round.png), and [notification icon](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/drawable-mdpi/ic_notification.png) are mdpi examples. Locate affected variants using `DENSITIES` in [AppIconResourcesTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/AppIconResourcesTest.java); do not open all artwork for a normal settings task.
+- [AdBlocker](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/AdBlocker.java): `isAd`, `hasBlockedQueryParameter`.
+- [Pointer recovery](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/assets/pointer_events.js): `containers`, `blocked`, `eligible`, `restore`, `apply`, `schedule`.
+
+## Preserve
+
+- Settings compose a scrollable body and custom header in a bottom-aligned dialog. Advanced starts collapsed. Logging expansion follows logging state and is independent. Preserve accessibility labels and native controls outside collapsed sections.
+- `MusicServerPreferences.bind` in [its controller](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/MusicServerPreferences.java) owns this dialog's dismiss listener, which clears its panel and refresh callback. Do not replace it. `AppUpdater.bindProgress` in [the updater](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/AppUpdater.java) releases its header via `onViewDetachedFromWindow`, not another dismiss listener.
+- The logo script uses `APP_LOGO_PATH` as a synthetic page resource. Interception serves cached bytes from [the bundled logo](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/drawable-nodpi/app_logo.png) before ad filtering. `isAppLogoRequest` matches the path across origins; it is not a host allowlist. Overlay images remain pointer-transparent. Delayed reinjection is playback-scoped and cancelled on navigation/destruction.
+- Keep launcher variants density-sized and notification artwork white with transparent padding/negative space; the bundled page logo is a separate resource.
+- Ad network classification, DOM hiding, and bounded-depth JSON pruning are distinct layers. Preserve normal music/history requests. Open-app hiding targets navigation controls, not arbitrary page text.
+- Pointer recovery is injected independently of logging and site-mode preference, but installs only once in the top-level HTTPS music page. It repairs computed `pointer-events:none` only on explicit primary containers, in ancestor order—not every descendant, button, image, logo, or player.
+- Recovery respects hidden/inert/disabled ancestors, visible modals (including opening transparent dialogs), Kid mode, fullscreen, and expanded-player guards. It restores only still-owned inline overrides, preserves original priority/newer page values, disconnects its observer around writes, and restores on pagehide. Never synthesize clicks or remove restrictions.
+
+## Boundaries and device checks
+
+Consult [music-server](/home/runner/work/ssYTMusic/ssYTMusic/Skills/music-server/SKILL.md) for its panel/dismissal changes; [diagnostics](/home/runner/work/ssYTMusic/ssYTMusic/Skills/diagnostics/SKILL.md) for logging/statistics semantics; [playback](/home/runner/work/ssYTMusic/ssYTMusic/Skills/playback/SKILL.md) for thumbnails, compact-player visuals, swipe controls, or player guards; [kid-mode](/home/runner/work/ssYTMusic/ssYTMusic/Skills/kid-mode/SKILL.md) for restricted-surface changes; [delivery](/home/runner/work/ssYTMusic/ssYTMusic/Skills/delivery/SKILL.md) for updater binding/progress behavior. Normally exclude their implementation internals.
+
+Check narrow screens, large text, light/dark themes, mobile/desktop navigation, delayed/SPA logo rendering, settings reopen, and updater-header detachment. Reproduce blocked primary containers; verify modals, restricted controls, logo overlays, expanded player/fullscreen, and Kid mode retain intended hit testing. [Structural tests](/home/runner/work/ssYTMusic/ssYTMusic/Skills/webview-shell/references/tests.md) cannot establish actual Chromium layout or event behavior.
