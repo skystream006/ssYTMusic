@@ -229,3 +229,35 @@ If that version's release already exists, it is left unchanged; the rebuilt APK 
 still available in the workflow artifacts. Merge new changes into `main` when you
 need a new release. Pull request artifact versions are previews, not reserved release
 versions; the final version is calculated from the merged commit on `main`.
+
+## AI engineering Skills
+
+The canonical collection at
+`/home/runner/work/ssYTMusic/ssYTMusic/Skills` contains six engineering domains:
+**webview-shell**, **playback**, **kid-mode**, **music-server**, **diagnostics**,
+and **delivery**, plus a lightweight **repo-router** for ambiguous or cross-domain
+requests. Skill metadata selects the domain; concise control planes point to
+source symbols, conventions and targeted tests in on-demand references.
+Do not load the entire collection for each task.
+
+For Copilot CLI, register the collection in an interactive session:
+
+```text
+/skills add /home/runner/work/ssYTMusic/ssYTMusic/Skills
+/skills reload
+/skills list
+/skills info repo-router
+```
+
+Use your actual absolute checkout path if different. Directory registration
+does not copy the Skills. Confirm all seven locations in a fresh session before
+relying on automatic selection; registration was not run in the authoring
+sandbox. This is a CLI integration, **not a claim of cloud-agent auto-discovery**
+from the custom root. No duplicate tree or unverified symlink adapter is included.
+
+See the [router](/home/runner/work/ssYTMusic/ssYTMusic/Skills/repo-router/SKILL.md)
+for routing, and the
+[discovery and validation guide](/home/runner/work/ssYTMusic/ssYTMusic/Skills/repo-router/references/validation.md)
+for supported integration, test commands and coverage limitations. Repository
+links in the references use the authoring checkout's absolute root; resolve their
+suffixes against your checkout when working elsewhere.

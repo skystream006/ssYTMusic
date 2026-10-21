@@ -1,0 +1,18 @@
+# Music Server validation selection
+
+Use the [shared validation command guide](/home/runner/work/ssYTMusic/ssYTMusic/Skills/repo-router/references/validation.md). Qualify the linked classes with `com.skystream.ssmusic`; choose methods for a narrow change or the class for changes spanning its behavior.
+
+| Behavior | Existing test class/methods | Evidence boundary |
+| --- | --- | --- |
+| Origin/PKCE/callback rules | [MusicServerAuthTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/MusicServerAuthTest.java): `normalizesHttpsOrigins`, `rejectsNonOriginAndAmbiguousInputs`, `pkceMatchesRfc7636Vector`, `independentlyGeneratesFullEntropyVerifierAndState` | Executable JVM logic, not browser/server integration |
+| Callback one-use and expiry | Same class: `callbackAcceptsEitherParameterOrderOnlyOnce`, `invalidCallbacksDoNotConsumePendingLogin`, `expiryRejectsBoundaryAndClockRollback`, `restoredPendingUsesOriginalExpiryAndState`, `parsesIsoExpiryWithoutApi26TimeClasses` | Restored-pending test constructs the model; it does not decrypt a saved record |
+| Body size/deadline limits | [MusicServerClientTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/MusicServerClientTest.java): `boundsServerResponseReads`, `rejectsResponsesPastDeadline` | In-memory streams, not real HTTPS socket timeouts |
+| Job URL/token validation | Same class: `validatesJobUrlsBeforeSending`, `sessionRejectsHeaderInjectionAndInvalidOrigins` | Validates helper/model inputs, not transport or Keystore |
+| Song canonicalization/playlist eligibility | [MusicServerUrlsTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/MusicServerUrlsTest.java); `playlistButtonRequiresNonemptyUnambiguousListParameter` for playlist validation | Pure URL behavior, no live player extraction |
+| Player source and callback wiring | [MusicServerPreferencesTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/MusicServerPreferencesTest.java): `currentSongComesFromPlayerNotPotentiallyDifferentBrowsingPage`, `callbackIsHandledOnColdAndWarmStartsWithoutNavigatingOrLoggingIt` | Source-string assertions only |
+| External browser and periodic visibility | Same class: `usesExternalBrowserAndRefreshesPlaylistVisibility` | Source structure; does not run the refresh handler/browser |
+| Panel placement/accessibility/background | [PreferencesLayoutTest](/home/runner/work/ssYTMusic/ssYTMusic/app/src/test/java/com/skystream/ssmusic/PreferencesLayoutTest.java): `musicServerControlsAreOutsideCollapsedSectionsAndStartLoggedOut`, `musicServerPanelHasRoundedThemeAwareShading` | XML structure, not rendered dimensions or runtime visibility |
+
+No existing tests here exercise Android Keystore/AtomicFile record round trips, key invalidation, real callback intent dispatch, concurrent cancellation/generation races, HTTP status handling over a connection, or live player JavaScript. Check those manually using the targeted scenarios in [authentication/storage](/home/runner/work/ssYTMusic/ssYTMusic/Skills/music-server/references/auth-storage.md) and [jobs/UI](/home/runner/work/ssYTMusic/ssYTMusic/Skills/music-server/references/jobs-ui.md). Do not call the client tests an end-to-end server suite; the external server is not in this repository.
+
+Only if callback/dialog wiring changes, consult [webview-shell](/home/runner/work/ssYTMusic/ssYTMusic/Skills/webview-shell/SKILL.md); only if media identity assumptions change, consult [playback](/home/runner/work/ssYTMusic/ssYTMusic/Skills/playback/SKILL.md). Unrelated playback, updater, and logging suites are not default dependencies.
