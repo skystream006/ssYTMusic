@@ -1,5 +1,6 @@
 package com.skystream.ssmusic;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
@@ -10,59 +11,39 @@ import org.junit.Test;
 
 public class LoggingModeSettingsTest {
     @Test
-    public void advancedStartsCollapsedAndStillAllowsManualToggling() throws Exception {
+    public void pageElementsStartCollapsedAndStillAllowManualToggling() throws Exception {
         String source = source("MainActivity");
-        String advanced = source.substring(source.indexOf("TextView advancedButton ="),
-                source.indexOf("TextView loggingButton ="));
-        assertTrue(advanced.contains(
-                "setAdvancedExpanded(advancedButton, advancedSettings, false);"));
-        assertTrue(advanced.contains("advancedButton.setOnClickListener"));
-        assertTrue(advanced.contains(
-                "boolean expanded = advancedSettings.getVisibility() != View.VISIBLE;"));
-        assertTrue(advanced.contains(
-                "setAdvancedExpanded(advancedButton, advancedSettings, expanded);"));
-    }
-
-    @Test
-    public void loggingExpansionStartsFromLoggingStateAndStillAllowsManualToggling() throws Exception {
-        String source = source("MainActivity");
-        String logging = source.substring(source.indexOf("TextView loggingButton ="),
+        String section = source.substring(source.indexOf("TextView blockElementsButton ="),
                 source.indexOf("Switch kidModeSwitch"));
-        assertTrue(logging.contains(
-                "setLoggingExpanded(loggingButton, loggingSettings, Logger.isEnabled());"));
-        assertTrue(logging.contains("loggingButton.setOnClickListener"));
-        assertTrue(logging.contains(
-                "boolean expanded = loggingSettings.getVisibility() != View.VISIBLE;"));
-        assertTrue(logging.contains(
-                "setLoggingExpanded(loggingButton, loggingSettings, expanded);"));
+        assertTrue(section.contains(
+                "setBlockElementsExpanded(blockElementsButton, blockElementsSettings, false);"));
+        assertTrue(section.contains("blockElementsButton.setOnClickListener"));
+        assertTrue(section.contains(
+                "boolean expanded = blockElementsSettings.getVisibility() != View.VISIBLE;"));
+        assertTrue(section.contains(
+                "setBlockElementsExpanded(blockElementsButton, blockElementsSettings, expanded);"));
     }
 
     @Test
-    public void advancedExpansionKeepsVisibilityLabelAndAccessibilityInSync() throws Exception {
+    public void loggingAndAdvancedNoLongerHaveExpansionState() throws Exception {
         String source = source("MainActivity");
-        String helper = source.substring(source.indexOf("private void setAdvancedExpanded("),
-                source.indexOf("private void setLoggingExpanded("));
-        assertTrue(helper.contains(
-                "advancedSettings.setVisibility(expanded ? View.VISIBLE : View.GONE)"));
-        assertTrue(helper.contains("advancedButton.setText(expanded\n"
-                + "                ? R.string.advanced_expanded : R.string.advanced_collapsed)"));
-        assertTrue(helper.contains("advancedButton.setContentDescription(getString(expanded\n"
-                + "                ? R.string.advanced_collapse_accessibility\n"
-                + "                : R.string.advanced_expand_accessibility))"));
+        assertFalse(source.contains("setAdvancedExpanded"));
+        assertFalse(source.contains("setLoggingExpanded"));
+        assertFalse(source.contains("R.id.advanced_settings"));
+        assertFalse(source.contains("R.id.logging_settings"));
     }
 
     @Test
-    public void loggingExpansionKeepsVisibilityLabelAndAccessibilityInSync() throws Exception {
+    public void pageElementsExpansionKeepsVisibilityLabelAndAccessibilityInSync() throws Exception {
         String source = source("MainActivity");
-        String helper = source.substring(source.indexOf("private void setLoggingExpanded("),
+        String helper = source.substring(source.indexOf("private void setBlockElementsExpanded("),
                 source.indexOf("private void updateLoggingSummary("));
-        assertTrue(helper.contains(
-                "loggingSettings.setVisibility(expanded ? View.VISIBLE : View.GONE)"));
-        assertTrue(helper.contains("loggingButton.setText(expanded\n"
-                + "                ? R.string.logging_expanded : R.string.logging_collapsed)"));
-        assertTrue(helper.contains("loggingButton.setContentDescription(getString(expanded\n"
-                + "                ? R.string.logging_collapse_accessibility\n"
-                + "                : R.string.logging_expand_accessibility))"));
+        assertTrue(helper.contains("settings.setVisibility(expanded ? View.VISIBLE : View.GONE)"));
+        assertTrue(helper.contains("button.setText(expanded\n"
+                + "                ? R.string.block_page_elements_expanded : R.string.block_page_elements_collapsed)"));
+        assertTrue(helper.contains("button.setContentDescription(getString(expanded\n"
+                + "                ? R.string.block_page_elements_collapse_accessibility\n"
+                + "                : R.string.block_page_elements_expand_accessibility))"));
     }
 
     @Test
