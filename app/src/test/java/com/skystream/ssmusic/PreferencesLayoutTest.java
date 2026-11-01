@@ -124,37 +124,42 @@ public class PreferencesLayoutTest {
     }
 
     @Test
-    public void advancedStartsCollapsedAndContainsOnlyAdvancedSettings() throws Exception {
+    public void pageElementsStartCollapsedAndContainAllSevenBraveOptions() throws Exception {
         Document layout = readResource("layout/dialog_preferences.xml");
-        Element advanced = findById(layout, "advanced_settings");
-        assertEquals("gone", advanced.getAttributeNS(ANDROID, "visibility"));
-        assertSame(advanced.getParentNode(), findById(layout, "advanced_button").getParentNode());
-        for (String id : new String[]{"open_supported_links_button",
-                "stats_for_nerds_switch", "kid_mode_switch"}) {
-            assertSame(advanced, findById(layout, id).getParentNode());
-        }
-        for (String id : new String[]{"video_thumbnail_switch", "navigation_bar"}) {
-            assertSame(advanced.getParentNode(), findById(layout, id).getParentNode());
-        }
-        for (String id : new String[]{"theme_spinner", "site_mode_spinner"}) {
-            assertSame(advanced.getParentNode(), findById(layout, id).getParentNode().getParentNode());
+        Element section = findById(layout, "block_page_elements_settings");
+        Element button = findById(layout, "block_page_elements_button");
+        assertEquals("gone", section.getAttributeNS(ANDROID, "visibility"));
+        assertSame(layout.getDocumentElement(), section.getParentNode());
+        assertSame(section.getParentNode(), button.getParentNode());
+        assertEquals("@string/block_page_elements_collapsed", button.getAttributeNS(ANDROID, "text"));
+        assertEquals("false", button.getAttributeNS(ANDROID, "textAllCaps"));
+        assertEquals(7, section.getElementsByTagName("Switch").getLength());
+        Document strings = readResource("values/strings.xml");
+        for (PageElementBlock block : PageElementBlock.values()) {
+            Element toggle = findById(layout, block.preferenceKey() + "_switch");
+            assertSame(section, toggle.getParentNode());
+            assertEquals("48dp", toggle.getAttributeNS(ANDROID, "minHeight"));
+            assertEquals("@string/" + block.preferenceKey(), toggle.getAttributeNS(ANDROID, "text"));
+            assertTrue(findByName(strings, "string", block.preferenceKey())
+                    .getTextContent().startsWith("Block YouTube "));
         }
     }
 
     @Test
-    public void loggingIsIndependentlyCollapsibleWithAllLoggingControls() throws Exception {
+    public void formerAdvancedAndLoggingControlsAreAlwaysAtTheTopLevel() throws Exception {
         Document layout = readResource("layout/dialog_preferences.xml");
-        Element logging = findById(layout, "logging_settings");
-        Element button = findById(layout, "logging_button");
-        assertEquals("gone", logging.getAttributeNS(ANDROID, "visibility"));
-        assertSame(layout.getDocumentElement(), logging.getParentNode());
-        assertSame(logging.getParentNode(), button.getParentNode());
-        assertSame(logging.getParentNode(), findById(layout, "advanced_settings").getParentNode());
-        assertEquals("Button", button.getTagName());
-        assertEquals("@string/logging_collapsed", button.getAttributeNS(ANDROID, "text"));
-        assertEquals("false", button.getAttributeNS(ANDROID, "textAllCaps"));
-        for (String id : new String[]{"logging_switch", "logging_summary", "log_actions"}) {
-            assertSame(logging, findById(layout, id).getParentNode());
+        for (String id : new String[]{"open_supported_links_button", "stats_for_nerds_switch",
+                "kid_mode_switch", "logging_switch", "logging_summary", "log_actions",
+                "video_thumbnail_switch", "navigation_bar"}) {
+            Element control = findById(layout, id);
+            assertSame(layout.getDocumentElement(), control.getParentNode());
+            assertFalse(control.hasAttributeNS(ANDROID, "visibility"));
+        }
+        NodeList elements = layout.getElementsByTagName("*");
+        for (int i = 0; i < elements.getLength(); i++) {
+            String id = ((Element) elements.item(i)).getAttributeNS(ANDROID, "id");
+            assertFalse(id, id.equals("@+id/advanced_button") || id.equals("@+id/advanced_settings")
+                    || id.equals("@+id/logging_button") || id.equals("@+id/logging_settings"));
         }
     }
 

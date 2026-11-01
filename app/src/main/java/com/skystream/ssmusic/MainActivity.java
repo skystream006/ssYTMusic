@@ -237,21 +237,34 @@ public class MainActivity extends AppCompatActivity {
 
     static final String AD_JSON_PRUNE_SCRIPT =
             "(function(){"
-                    + "if(window.__ssmusicJsonPruneInstalled){return;}"
-                    + "window.__ssmusicJsonPruneInstalled=true;"
+                    + "if(location.origin!=='https://music.youtube.com'||window.top!==window){return;}"
+                    + "if(window.__ssmusicPruneResponse){"
+                    + "window.__ssmusicPruneResponse(window.ytInitialPlayerResponse,0);"
+                    + "window.__ssmusicPruneResponse(window.ytInitialData,0);return;}"
                     + "var keys=['playerAds','adPlacements','adSlots','adBreakHeartbeatParams',"
                     + "'playerAdParams','adPlacementConfig','adBreakParams'];"
                     + "function prune(value,depth){"
                     + "if(!value||typeof value!=='object'||depth>8){return;}"
+                    + "if(window.__ssmusicPageElements){window.__ssmusicPageElements.prune(value);}"
                     + "if(Array.isArray(value)){for(var i=0;i<value.length;i++){prune(value[i],depth+1);}return;}"
                     + "for(var j=0;j<keys.length;j++){if(keys[j] in value){delete value[keys[j]];}}"
                     + "for(var key in value){if(Object.prototype.hasOwnProperty.call(value,key)){prune(value[key],depth+1);}}"
                     + "}"
+                    + "window.__ssmusicPruneResponse=prune;"
                     + "var parse=JSON.parse;"
                     + "JSON.parse=function(){var result=parse.apply(this,arguments);prune(result,0);return result;};"
                     + "if(window.Response&&Response.prototype.json){"
                     + "var json=Response.prototype.json;"
                     + "Response.prototype.json=function(){return json.apply(this,arguments).then(function(result){prune(result,0);return result;});};"
+                    + "}"
+                    + "if(window.XMLHttpRequest){"
+                    + "var descriptor=Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype,'response');"
+                    + "if(descriptor&&descriptor.get&&descriptor.configurable){"
+                    + "var response=descriptor.get;"
+                    + "descriptor.get=function(){var value=response.call(this);"
+                    + "if(this.responseType==='json'){prune(value,0);}return value;};"
+                    + "Object.defineProperty(XMLHttpRequest.prototype,'response',descriptor);"
+                    + "}"
                     + "}"
                     + "prune(window.ytInitialPlayerResponse,0);"
                     + "prune(window.ytInitialData,0);"
@@ -819,6 +832,8 @@ public class MainActivity extends AppCompatActivity {
     private String compactPlayerScript;
     private String gestureDiagnosticsScript;
     private String pointerEventsScript;
+    private ScriptHandler pageElementScriptHandler;
+    private String pageElementScript;
     private boolean clearHistoryAfterLoad;
     private PermissionRequest pendingPermissionRequest;
     private volatile boolean playbackActive;
@@ -1072,11 +1087,14 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> grantWebPermissionsIfAllowed(request, true));
             }
         });
+        updatePageElementScript();
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             Set<String> origins = new HashSet<>();
             origins.add("https://music.youtube.com");
             WebViewCompat.addDocumentStartJavaScript(
                     webView, BACKGROUND_PLAYBACK_SCRIPT, origins);
+            WebViewCompat.addDocumentStartJavaScript(
+                    webView, AD_JSON_PRUNE_SCRIPT, origins);
         }
         updateKidModeScript();
     }
@@ -1191,6 +1209,44 @@ public class MainActivity extends AppCompatActivity {
         return preferences.getBoolean(KEY_SHOW_VIDEO_THUMBNAIL, false);
     }
 
+    private String pageElementScript() {
+        if (pageElementScript == null) {
+            try (InputStream input = getAssets().open("page_elements.js");
+                    ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[8192];
+                int count;
+                while ((count = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, count);
+                }
+                pageElementScript = new String(output.toByteArray(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new IllegalStateException("Page element blocking script unavailable", e);
+            }
+        }
+        StringBuilder options = new StringBuilder("window.__ssmusicPageElementOptions={");
+        for (PageElementBlock block : PageElementBlock.values()) {
+            options.append(block.scriptKey).append(':')
+                    .append(preferences.getBoolean(block.preferenceKey(), block.defaultEnabled))
+                    .append(',');
+        }
+        return options.append("};").append(pageElementScript).toString();
+    }
+
+    private void updatePageElementScript() {
+        if (pageElementScriptHandler != null) {
+            pageElementScriptHandler.remove();
+            pageElementScriptHandler = null;
+        }
+        String script = pageElementScript();
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+            pageElementScriptHandler = WebViewCompat.addDocumentStartJavaScript(
+                    webView, script, new HashSet<>(Arrays.asList("https://music.youtube.com")));
+        }
+        if (SiteScope.isPlaybackUrl(webView.getUrl())) {
+            webView.evaluateJavascript(script, null);
+        }
+    }
+
     private void showPreferences() {
         View content = getLayoutInflater().inflate(R.layout.dialog_preferences, null);
         View header = getLayoutInflater().inflate(R.layout.preferences_header, null);
@@ -1244,21 +1300,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView advancedButton = content.findViewById(R.id.advanced_button);
-        View advancedSettings = content.findViewById(R.id.advanced_settings);
-        setAdvancedExpanded(advancedButton, advancedSettings, false);
-        advancedButton.setOnClickListener(v -> {
-            boolean expanded = advancedSettings.getVisibility() != View.VISIBLE;
-            setAdvancedExpanded(advancedButton, advancedSettings, expanded);
+        TextView blockElementsButton = content.findViewById(R.id.block_page_elements_button);
+        View blockElementsSettings = content.findViewById(R.id.block_page_elements_settings);
+        setBlockElementsExpanded(blockElementsButton, blockElementsSettings, false);
+        blockElementsButton.setOnClickListener(v -> {
+            boolean expanded = blockElementsSettings.getVisibility() != View.VISIBLE;
+            setBlockElementsExpanded(blockElementsButton, blockElementsSettings, expanded);
         });
-
-        TextView loggingButton = content.findViewById(R.id.logging_button);
-        View loggingSettings = content.findViewById(R.id.logging_settings);
-        setLoggingExpanded(loggingButton, loggingSettings, Logger.isEnabled());
-        loggingButton.setOnClickListener(v -> {
-            boolean expanded = loggingSettings.getVisibility() != View.VISIBLE;
-            setLoggingExpanded(loggingButton, loggingSettings, expanded);
-        });
+        for (PageElementBlock block : PageElementBlock.values()) {
+            Switch blockSwitch = content.findViewById(block.switchId);
+            blockSwitch.setChecked(preferences.getBoolean(block.preferenceKey(), block.defaultEnabled));
+            blockSwitch.setOnCheckedChangeListener((button, checked) -> {
+                preferences.edit().putBoolean(block.preferenceKey(), checked).apply();
+                Logger.event(TAG, "Page element blocking changed: " + block.scriptKey + "=" + checked);
+                updatePageElementScript();
+            });
+        }
 
         Switch kidModeSwitch = content.findViewById(R.id.kid_mode_switch);
         kidModeSwitch.setChecked(isKidModeEnabled());
@@ -1354,22 +1411,13 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void setAdvancedExpanded(TextView advancedButton, View advancedSettings, boolean expanded) {
-        advancedSettings.setVisibility(expanded ? View.VISIBLE : View.GONE);
-        advancedButton.setText(expanded
-                ? R.string.advanced_expanded : R.string.advanced_collapsed);
-        advancedButton.setContentDescription(getString(expanded
-                ? R.string.advanced_collapse_accessibility
-                : R.string.advanced_expand_accessibility));
-    }
-
-    private void setLoggingExpanded(TextView loggingButton, View loggingSettings, boolean expanded) {
-        loggingSettings.setVisibility(expanded ? View.VISIBLE : View.GONE);
-        loggingButton.setText(expanded
-                ? R.string.logging_expanded : R.string.logging_collapsed);
-        loggingButton.setContentDescription(getString(expanded
-                ? R.string.logging_collapse_accessibility
-                : R.string.logging_expand_accessibility));
+    private void setBlockElementsExpanded(TextView button, View settings, boolean expanded) {
+        settings.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        button.setText(expanded
+                ? R.string.block_page_elements_expanded : R.string.block_page_elements_collapsed);
+        button.setContentDescription(getString(expanded
+                ? R.string.block_page_elements_collapse_accessibility
+                : R.string.block_page_elements_expand_accessibility));
     }
 
     private void updateLoggingSummary(TextView summary) {
@@ -1717,6 +1765,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Logger.debug(TAG, "Injecting page scripts");
+        view.evaluateJavascript(pageElementScript(), null);
         if (isKidModeEnabled()) {
             view.evaluateJavascript(kidModeScript(), null);
         }

@@ -55,14 +55,24 @@
         <item>@string/site_mode_mobile</item>
         <item>@string/site_mode_desktop</item>
     </string-array>
-    <string name="advanced_collapsed">Advanced ▾</string>
-    <string name="advanced_expanded">Advanced ▴</string>
-    <string name="advanced_expand_accessibility">Advanced, collapsed. Tap to expand.</string>
-    <string name="advanced_collapse_accessibility">Advanced, expanded. Tap to collapse.</string>
-    <string name="logging_collapsed">Logging ▾</string>
-    <string name="logging_expanded">Logging ▴</string>
-    <string name="logging_expand_accessibility">Logging, collapsed. Tap to expand.</string>
-    <string name="logging_collapse_accessibility">Logging, expanded. Tap to collapse.</string>
+    <string name="block_page_elements_collapsed">Block Page elements ▾</string>
+    <string name="block_page_elements_expanded">Block Page elements ▴</string>
+    <string name="block_page_elements_expand_accessibility">Block Page elements, collapsed. Tap to expand.</string>
+    <string name="block_page_elements_collapse_accessibility">Block Page elements, expanded. Tap to collapse.</string>
+    <string name="block_youtube_shorts">Block YouTube Shorts</string>
+    <string name="block_youtube_shorts_summary">Hide Shorts shelves, cards, and navigation links.</string>
+    <string name="block_youtube_playables">Block YouTube Playables</string>
+    <string name="block_youtube_playables_summary">Hide Playables game shelves, cards, and navigation links.</string>
+    <string name="block_youtube_recommended_content">Block YouTube recommended content</string>
+    <string name="block_youtube_recommended_content_summary">Hide suggested next videos, Related, automix suggestions, and end cards. Keep your playlist queue and Home feed.</string>
+    <string name="block_youtube_distracting_elements">Block YouTube distracting elements</string>
+    <string name="block_youtube_distracting_elements_summary">Hide page sign-in/account buttons, menus, comments, and video descriptions. Turn off to sign in or use page menus; playback controls stay available.</string>
+    <string name="block_youtube_thumbnails">Block YouTube thumbnails</string>
+    <string name="block_youtube_thumbnails_summary">Hide artwork and previews in browsing and search results without hiding titles or play controls. Current-player artwork is unchanged.</string>
+    <string name="block_youtube_autodubbed_videos">Block YouTube auto-dubbed videos</string>
+    <string name="block_youtube_autodubbed_videos_summary">Hide videos marked auto-dubbed and remove auto-dubbed audio tracks from newly loaded videos. Already loaded audio changes on the next page load.</string>
+    <string name="block_youtube_members_only_videos">Block YouTube members-only videos</string>
+    <string name="block_youtube_members_only_videos_summary">Hide video cards marked as members-only.</string>
     <string name="kid_mode">Kid mode</string>
     <string name="kid_mode_summary">Limit listening to playlists opened from Library, hide discovery controls, and turn off autoplay. A password is required to turn Kid mode off.</string>
     <string name="kid_mode_enable">Enable Kid mode</string>

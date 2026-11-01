@@ -5,6 +5,7 @@ ssYTMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It
 - mobile or desktop user agent mode dropdown
 - system, light, or dark app theme dropdown
 - video display default for showing the song thumbnail instead of available video
+- seven independent YouTube controls under **Block Page elements** (collapsed by default)
 - an **Open supported links** shortcut to Android's settings for handling `music.youtube.com` links
 - **Check for updates** using this repository's latest GitHub release
 - back, forward, refresh, and home navigation
@@ -16,10 +17,55 @@ ssYTMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It
 System Back (button or gesture) and the settings Back button navigate through page history.
 When no previous page is available, they open Home (Library in Kid mode) instead of exiting the app.
 
-Kid mode, supported links, and Stats for nerds are grouped under **Advanced**, which starts
-collapsed. **Logging** is a separate section, expanded whenever settings is opened with logging
-enabled and collapsed otherwise. Tap either heading to expand or collapse its controls.
+Kid mode, supported links, Stats for nerds, and logging controls are directly visible in Settings;
+there are no Advanced or Logging subsections. **Block Page elements** starts collapsed each time
+Settings opens. Tap its heading to expand or collapse the seven switches.
 **View log**, **Share log**, and **Clear log** appear together in one row.
+
+## Block Page elements
+
+All switches persist independently and update the current page without reloading playback.
+Their defaults apply to new and existing installations that have not saved a choice:
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| Block YouTube Shorts | On | Hides Shorts shelves, cards, and navigation links. |
+| Block YouTube Playables | On | Hides game shelves, cards, and navigation links. |
+| Block YouTube recommended content | Off | Hides suggested next videos, Related, automix suggestions, and end cards. |
+| Block YouTube distracting elements | On | Hides page sign-in/account buttons, menus, comments, and video descriptions. |
+| Block YouTube thumbnails | Off | Hides browsing/search artwork and hover previews, retaining titles and play controls. |
+| Block YouTube auto-dubbed videos | On | Hides marked video cards and filters auto-dubbed audio formats from newly loaded player responses. |
+| Block YouTube members-only videos | On | Hides video cards with members-only badges/metadata. |
+
+Turn off **Block YouTube distracting elements** to sign in or use page account/track menus.
+The native Settings button, search, and playback controls remain usable. Blocking thumbnails
+does not change current-player/notification artwork or **Show song thumbnail for videos**.
+Recommendation blocking preserves the Home feed (also excluded by Brave's current recommendation
+list) and your explicit Music playlist queue; it hides Music's Related and automix suggestions,
+not the user-selected Up next queue. It does not disable autoplay or enforce Kid mode.
+Disabling an option restores only this feature's presentation; it cannot undo Kid mode restrictions.
+Auto-dubbed audio already loaded into a player changes on the next page load, not mid-song.
+
+The option inventory was verified against Brave's
+[Android media settings](https://github.com/brave/brave-core/blob/5281b2736873bb16f0aee09778e5019c3faa4db9/android/java/brave-res/xml/media_preferences.xml).
+The [brave-browser overview](https://github.com/brave/brave-browser#readme) points to brave-core
+for source. Behavior was traced through Brave's
+[filter catalog](https://github.com/brave/adblock-resources/blob/6da9b247c3368baa8b4f24cd02046e18702a6527/filter_lists/list_catalog.json),
+its [YouTube lists](https://github.com/brave/adblock-lists/tree/544b8275c5947b3f4a819007216cd776ef98724e/brave-lists),
+and the catalog's [EasyList custom lists](https://github.com/easylist/easylist/tree/ba2dda41e2c9eb849a7688fb2eb8a0ed95d95452/custom-lists).
+ssYTMusic implements these categories independently for its Music WebView, not Brave's filter engine.
+No filter lists or executable scripts are downloaded at runtime.
+
+Filtering is limited to the top-level `https://music.youtube.com` page, including dynamically
+inserted/recycled results. It never runs on Google sign-in pages or changes playback media.
+Brave's mobile YouTube-specific controls are adapted to Music's page structure, with support for
+recognizable desktop/mobile YouTube renderers. Results depend on the site's current markup and
+badges; this is not a content rating or access-control system. A current Android System WebView
+allows installation at document start; older WebViews apply after page load and may briefly show
+elements or miss early audio responses. Browser fixtures cover the behavior; live YouTube Music
+and Android device verification are still needed.
+
+## Player presentation
 
 The YouTube Music wordmark in the page is replaced with the bundled ssYTMusic logo, which is served
 to the WebView from a synthetic same-origin path instead of the network.
@@ -45,7 +91,7 @@ restrictions. Live playback, browsing, and restricted-content behavior require d
 
 ## Supported links
 
-To open YouTube Music links in ssYTMusic, expand **Advanced** and choose **Open supported links** in the settings
+To open YouTube Music links in ssYTMusic, choose **Open supported links** in the settings
 panel, enable the Android setting, and select `music.youtube.com` if prompted. Android 12+
 opens the app's link settings directly; older devices (or devices without that screen)
 open App info, where **Open by default** can be configured. Android requires user approval;
@@ -83,7 +129,7 @@ uncertain network result. This login is separate from YouTube Music sign-in.
 
 ## Kid mode
 
-Sign in first, then open **Settings → Advanced → Kid mode**. Enabling immediately asks
+Sign in first, then open **Settings → Kid mode**. Enabling immediately asks
 you to choose and confirm a non-empty password. Cancelling leaves the mode unchanged.
 Turning it off requires that same password; an incorrect password keeps it locked.
 Only a salted, slow password verifier is stored in app-private preferences, not the password.
@@ -133,7 +179,7 @@ installed silently. Checking and downloading require an internet connection.
 
 ## Stats for nerds
 
-Enable **Stats for nerds** under **Advanced → Diagnostics** in settings. The preference is saved, and
+Enable **Stats for nerds** under **Diagnostics** in settings. The preference is saved, and
 the touch-through overlay stays above the app content but below settings, so playback and
 navigation remain usable. Settings can be scrolled on smaller screens.
 
@@ -148,7 +194,7 @@ every 30 seconds on a worker thread. Sampling stops when disabled or the app is 
 
 ## Logging
 
-Logging is off by default. Expand **Logging** in settings and turn on **Enable logging**, then choose:
+Logging is off by default. Turn on **Enable logging** directly in settings, then choose:
 
 - **Full logging**: the existing 512 KB rotation with one backup.
 - **Reactive logging**: keeps the latest 100 messages in one bounded file, dropping the oldest
@@ -204,6 +250,16 @@ and may briefly interrupt playback.
 ```sh
 ./gradlew test assembleDebug
 ```
+
+The optional real-browser page-blocking regressions require Node.js and Playwright with Chromium
+available on the Node module path:
+
+```sh
+node --test app/src/test/js/page_elements.test.js
+```
+
+Set `CHROME_BIN` to use an existing Chromium/Chrome executable instead of Playwright's browser.
+These tests use intercepted local fixtures, not the live YouTube Music service.
 
 Builds require Git and a full-history checkout (`git fetch --unshallow` for an existing
 shallow clone). `app/build.gradle` derives both Android version fields from the number
