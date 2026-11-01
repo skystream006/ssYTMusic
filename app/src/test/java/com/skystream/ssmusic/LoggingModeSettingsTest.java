@@ -25,11 +25,18 @@ public class LoggingModeSettingsTest {
     }
 
     @Test
-    public void loggingAndAdvancedNoLongerHaveExpansionState() throws Exception {
+    public void advancedStartsCollapsedAndTogglesWithAccessibleLabels() throws Exception {
         String source = source("MainActivity");
-        assertFalse(source.contains("setAdvancedExpanded"));
+        assertTrue(source.contains("setAdvancedExpanded(advancedButton, advancedSettings, false)"));
+        assertTrue(source.contains("advancedButton.setOnClickListener"));
+        assertTrue(source.contains("advancedSettings.getVisibility() != View.VISIBLE"));
+        String helper = source.substring(source.indexOf("private void setAdvancedExpanded("),
+                source.indexOf("private void updateLoggingSummary("));
+        assertTrue(helper.contains("settings.setVisibility(expanded ? View.VISIBLE : View.GONE)"));
+        assertTrue(helper.contains("R.string.advanced_expanded : R.string.advanced_collapsed"));
+        assertTrue(helper.contains("R.string.advanced_collapse_accessibility"));
+        assertTrue(helper.contains("R.string.advanced_expand_accessibility"));
         assertFalse(source.contains("setLoggingExpanded"));
-        assertFalse(source.contains("R.id.advanced_settings"));
         assertFalse(source.contains("R.id.logging_settings"));
     }
 

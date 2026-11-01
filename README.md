@@ -17,9 +17,12 @@ ssYTMusic is a Chromium WebView-based Android app dedicated to YouTube Music. It
 System Back (button or gesture) and the settings Back button navigate through page history.
 When no previous page is available, they open Home (Library in Kid mode) instead of exiting the app.
 
-Kid mode, supported links, Stats for nerds, and logging controls are directly visible in Settings;
-there are no Advanced or Logging subsections. **Block Page elements** starts collapsed each time
-Settings opens. Tap its heading to expand or collapse the seven switches.
+Hold the Settings button for **3 seconds** to hide it for **5 seconds**, after which it
+automatically reappears. A normal tap still opens Settings.
+
+**Advanced** contains Supported links first, followed by Kid mode, Diagnostics (Stats for nerds),
+and Enable logging with its log actions. **Advanced** and **Block Page elements** start collapsed
+each time Settings opens. Tap either heading to expand or collapse its controls.
 **View log**, **Share log**, and **Clear log** appear together in one row.
 
 ## Block Page elements
@@ -91,7 +94,7 @@ restrictions. Live playback, browsing, and restricted-content behavior require d
 
 ## Supported links
 
-To open YouTube Music links in ssYTMusic, choose **Open supported links** in the settings
+To open YouTube Music links in ssYTMusic, choose **Advanced → Open supported links** in the settings
 panel, enable the Android setting, and select `music.youtube.com` if prompted. Android 12+
 opens the app's link settings directly; older devices (or devices without that screen)
 open App info, where **Open by default** can be configured. Android requires user approval;
@@ -129,7 +132,7 @@ uncertain network result. This login is separate from YouTube Music sign-in.
 
 ## Kid mode
 
-Sign in first, then open **Settings → Kid mode**. Enabling immediately asks
+Sign in first, then open **Settings → Advanced → Kid mode**. Enabling immediately asks
 you to choose and confirm a non-empty password. Cancelling leaves the mode unchanged.
 Turning it off requires that same password; an incorrect password keeps it locked.
 Only a salted, slow password verifier is stored in app-private preferences, not the password.

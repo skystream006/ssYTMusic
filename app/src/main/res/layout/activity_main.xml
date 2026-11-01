@@ -60,7 +60,7 @@
         android:tint="#FFFFFF"
         android:visibility="gone" />
 
-    <ImageButton
+    <com.skystream.ssmusic.SettingsButton
         android:id="@+id/settings_button"
         android:layout_width="48dp"
         android:layout_height="48dp"

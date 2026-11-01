@@ -3,6 +3,10 @@
     <string name="app_name">ssYTMusic</string>
     <string name="settings">Settings</string>
     <string name="preferences">Preferences</string>
+    <string name="advanced_collapsed">Advanced ▾</string>
+    <string name="advanced_expanded">Advanced ▴</string>
+    <string name="advanced_expand_accessibility">Advanced, collapsed. Tap to expand.</string>
+    <string name="advanced_collapse_accessibility">Advanced, expanded. Tap to collapse.</string>
     <string name="music_server">Music Server</string>
     <string name="music_server_login_short">Log in</string>
     <string name="music_server_cancel_short">Cancel</string>
