@@ -22,7 +22,8 @@ public class PageElementBlockTest {
             assertTrue(keys.add(block.preferenceKey()));
             assertTrue(ids.add(block.switchId));
             assertEquals("block_youtube_" + block.scriptKey, block.preferenceKey());
-            assertEquals(block != PageElementBlock.THUMBNAILS && block != PageElementBlock.RECOMMENDED,
+            assertEquals(block != PageElementBlock.THUMBNAILS && block != PageElementBlock.RECOMMENDED
+                            && block != PageElementBlock.DISTRACTIONS,
                     block.defaultEnabled);
         }
     }

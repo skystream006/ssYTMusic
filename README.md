@@ -35,7 +35,7 @@ Their defaults apply to new and existing installations that have not saved a cho
 | Block YouTube Shorts | On | Hides Shorts shelves, cards, and navigation links. |
 | Block YouTube Playables | On | Hides game shelves, cards, and navigation links. |
 | Block YouTube recommended content | Off | Hides suggested next videos, Related, automix suggestions, and end cards. |
-| Block YouTube distracting elements | On | Hides page sign-in/account buttons, menus, comments, and video descriptions. |
+| Block YouTube distracting elements | Off | Hides page sign-in/account buttons, menus, comments, and video descriptions. |
 | Block YouTube thumbnails | Off | Hides browsing/search artwork and hover previews, retaining titles and play controls. |
 | Block YouTube auto-dubbed videos | On | Hides marked video cards and filters auto-dubbed audio formats from newly loaded player responses. |
 | Block YouTube members-only videos | On | Hides video cards with members-only badges/metadata. |
