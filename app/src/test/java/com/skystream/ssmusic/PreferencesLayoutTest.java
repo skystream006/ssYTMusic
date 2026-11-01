@@ -37,6 +37,7 @@ public class PreferencesLayoutTest {
     public void settingsButtonClearsBottomPlaybackAndNavigationArea() throws Exception {
         Document layout = readResource("layout/activity_main.xml");
         Element button = findById(layout, "settings_button");
+        assertEquals("com.skystream.ssmusic.SettingsButton", button.getTagName());
         assertEquals("bottom|end", button.getAttributeNS(ANDROID, "layout_gravity"));
         assertEquals("77dp", button.getAttributeNS(ANDROID, "layout_marginBottom"));
         assertEquals("16dp", button.getAttributeNS(ANDROID, "layout_marginEnd"));
@@ -146,20 +147,29 @@ public class PreferencesLayoutTest {
     }
 
     @Test
-    public void formerAdvancedAndLoggingControlsAreAlwaysAtTheTopLevel() throws Exception {
+    public void advancedStartsCollapsedWithSupportedLinksFirstAndContainsRelatedControls() throws Exception {
         Document layout = readResource("layout/dialog_preferences.xml");
+        Element section = findById(layout, "advanced_settings");
+        Element button = findById(layout, "advanced_button");
+        assertSame(layout.getDocumentElement(), section.getParentNode());
+        assertSame(section.getParentNode(), button.getParentNode());
+        assertEquals("gone", section.getAttributeNS(ANDROID, "visibility"));
+        assertEquals("@string/advanced_collapsed", button.getAttributeNS(ANDROID, "text"));
+        assertEquals("48dp", button.getAttributeNS(ANDROID, "minHeight"));
+        assertEquals("false", button.getAttributeNS(ANDROID, "textAllCaps"));
+        Element first = (Element) section.getElementsByTagName("*").item(0);
+        assertEquals("@string/supported_links", first.getAttributeNS(ANDROID, "text"));
         for (String id : new String[]{"open_supported_links_button", "stats_for_nerds_switch",
-                "kid_mode_switch", "logging_switch", "logging_summary", "log_actions",
-                "video_thumbnail_switch", "navigation_bar"}) {
+                "kid_mode_switch", "logging_switch", "logging_summary", "log_actions"}) {
             Element control = findById(layout, id);
-            assertSame(layout.getDocumentElement(), control.getParentNode());
+            assertSame(section, control.getParentNode());
             assertFalse(control.hasAttributeNS(ANDROID, "visibility"));
         }
-        NodeList elements = layout.getElementsByTagName("*");
-        for (int i = 0; i < elements.getLength(); i++) {
-            String id = ((Element) elements.item(i)).getAttributeNS(ANDROID, "id");
-            assertFalse(id, id.equals("@+id/advanced_button") || id.equals("@+id/advanced_settings")
-                    || id.equals("@+id/logging_button") || id.equals("@+id/logging_settings"));
+        assertEquals(Node.DOCUMENT_POSITION_FOLLOWING,
+                findById(layout, "open_supported_links_button")
+                        .compareDocumentPosition(findById(layout, "kid_mode_switch")));
+        for (String id : new String[]{"video_thumbnail_switch", "navigation_bar"}) {
+            assertSame(layout.getDocumentElement(), findById(layout, id).getParentNode());
         }
     }
 

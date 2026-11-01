@@ -13,7 +13,8 @@
 
 ## Preserve
 
-- Settings compose a scrollable body and custom header in a bottom-aligned dialog. Advanced starts collapsed. Logging expansion follows logging state and is independent. Preserve accessibility labels and native controls outside collapsed sections.
+- Settings compose a scrollable body and custom header in a bottom-aligned dialog. Advanced starts collapsed with Supported links first, then Kid mode, Diagnostics and logging (including the log-action row). Logging has no separate expansion state. Preserve accessibility labels and navigation/Music Server controls outside collapsed sections.
+- `SettingsButton` uses `SettingsButtonHold` to hide after a continuous 3-second touch and restore 5 seconds later. Interrupted touches cancel the hold; detachment cancels both timers. Page-load callbacks must not reveal the button early.
 - `MusicServerPreferences.bind` in [its controller](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/MusicServerPreferences.java) owns this dialog's dismiss listener, which clears its panel and refresh callback. Do not replace it. `AppUpdater.bindProgress` in [the updater](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/java/com/skystream/ssmusic/AppUpdater.java) releases its header via `onViewDetachedFromWindow`, not another dismiss listener.
 - The logo script uses `APP_LOGO_PATH` as a synthetic page resource. Interception serves cached bytes from [the bundled logo](/home/runner/work/ssYTMusic/ssYTMusic/app/src/main/res/drawable-nodpi/app_logo.png) before ad filtering. `isAppLogoRequest` matches the path across origins; it is not a host allowlist. Overlay images remain pointer-transparent. Delayed reinjection is playback-scoped and cancelled on navigation/destruction.
 - Keep launcher variants density-sized and notification artwork white with transparent padding/negative space; the bundled page logo is a separate resource.

@@ -819,7 +819,7 @@ public class MainActivity extends AppCompatActivity {
     private byte[] appLogoBytes;
 
     private PlaybackWebView webView;
-    private ImageButton settingsButton;
+    private SettingsButton settingsButton;
     private ImageButton kidModeHomeButton;
     private View statsOverlay;
     private StatsMonitor statsMonitor;
@@ -1317,6 +1317,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        TextView advancedButton = content.findViewById(R.id.advanced_button);
+        View advancedSettings = content.findViewById(R.id.advanced_settings);
+        setAdvancedExpanded(advancedButton, advancedSettings, false);
+        advancedButton.setOnClickListener(v -> setAdvancedExpanded(
+                advancedButton, advancedSettings, advancedSettings.getVisibility() != View.VISIBLE));
+
         Switch kidModeSwitch = content.findViewById(R.id.kid_mode_switch);
         kidModeSwitch.setChecked(isKidModeEnabled());
         kidModeSwitch.setOnCheckedChangeListener((button, checked) -> {
@@ -1418,6 +1424,13 @@ public class MainActivity extends AppCompatActivity {
         button.setContentDescription(getString(expanded
                 ? R.string.block_page_elements_collapse_accessibility
                 : R.string.block_page_elements_expand_accessibility));
+    }
+
+    private void setAdvancedExpanded(TextView button, View settings, boolean expanded) {
+        settings.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        button.setText(expanded ? R.string.advanced_expanded : R.string.advanced_collapsed);
+        button.setContentDescription(getString(expanded
+                ? R.string.advanced_collapse_accessibility : R.string.advanced_expand_accessibility));
     }
 
     private void updateLoggingSummary(TextView summary) {
@@ -2306,7 +2319,6 @@ public class MainActivity extends AppCompatActivity {
             injectPageScripts(view);
             restorePlaybackPosition(view, url);
             persistLocation(url);
-            settingsButton.setVisibility(View.VISIBLE);
             CookieManager.getInstance().flush();
             if (clearHistoryAfterLoad) {
                 view.clearHistory();
