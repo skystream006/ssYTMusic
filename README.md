@@ -74,8 +74,10 @@ The YouTube Music wordmark in the page is replaced with the bundled ssYTMusic lo
 to the WebView from a synthetic same-origin path instead of the network.
 
 In the expanded media view, swipe down on the video area to compact the player, up to
-open **Up next**, left for the previous song, or right for the next song. These gestures also work while the song
+open **Up next**, left for the next song, or right for the previous song. These gestures also work while the song
 thumbnail is shown. Swipes are disabled on compact/minimized media and all other pages.
+The media follows a recognized drag along its main axis, then settles back on release or
+cancellation; reduced-motion preferences disable the settling animation.
 Taps and player controls retain their normal behavior.
 
 The experimental **Compact player** shrinks the existing player page above the transport bar and exposes the
@@ -254,11 +256,12 @@ and may briefly interrupt playback.
 ./gradlew test assembleDebug
 ```
 
-The optional real-browser page-blocking regressions require Node.js and Playwright with Chromium
+The optional real-browser page-blocking and media-swipe regressions require Node.js and Playwright with Chromium
 available on the Node module path:
 
 ```sh
 node --test app/src/test/js/page_elements.test.js
+node --test app/src/test/js/media_swipes.test.js
 ```
 
 Set `CHROME_BIN` to use an existing Chromium/Chrome executable instead of Playwright's browser.

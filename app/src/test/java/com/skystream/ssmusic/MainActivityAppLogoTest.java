@@ -134,8 +134,8 @@ public class MainActivityAppLogoTest {
         String script = MainActivity.videoDisplayScript(
                 true, "Show thumbnail", "Play video", "Song thumbnail");
         assertTrue(script.contains("if(action==='down'){var compact=window.__ssmusicCompactPlayer;"));
-        assertTrue(script.contains("action==='left'?'ytmusic-player-bar .previous-button"));
-        assertTrue(script.contains(":'ytmusic-player-bar .next-button"));
+        assertTrue(script.contains("action==='left'?'ytmusic-player-bar .next-button"));
+        assertTrue(script.contains(":'ytmusic-player-bar .previous-button"));
         assertTrue(script.contains("var control=swipeControl(action);if(control){control.click();}"));
         assertTrue(script.contains("window.__ssmusicVideoDisplayInstalled=true;installSwipes();"));
     }
@@ -167,7 +167,7 @@ public class MainActivityAppLogoTest {
     public void videoDisplaySwipesReturnActionDiagnosticsToNativeLogger() {
         String script = MainActivity.videoDisplayScript(
                 true, "Show thumbnail", "Play video", "Song thumbnail");
-        assertTrue(script.contains("var command=action==='up'?'up next':action==='left'?'previous':'next';"));
+        assertTrue(script.contains("var command=action==='up'?'up next':action==='left'?'next':'previous';"));
         assertTrue(script.contains("return 'Media player swipe '+action+': '+command"
                 + "+(control?' control clicked':' control unavailable');"));
         assertTrue(script.contains("return 'rejected: no hit target'"));

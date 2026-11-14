@@ -36,6 +36,9 @@ public class PlaybackWebView extends WebView {
 
     void cancelMediaSwipe(String reason) {
         mediaSwipe.cancel();
+        if (swipeUrl != null) {
+            cancelSwipeDrag(false);
+        }
         if (receivingSwipe) {
             logSwipe("Native swipe cancel: " + reason);
         }
@@ -104,6 +107,15 @@ public class PlaybackWebView extends WebView {
                     logSwipe("WebView touch #" + touchSequence + " synthetic ACTION_CANCEL handled="
                             + cancelHandled);
                 }
+                if (swipeConsumed) {
+                    if (mediaSwipe.shouldIntercept()) {
+                        if (action == MotionEvent.ACTION_MOVE) {
+                            updateSwipeDrag();
+                        }
+                    } else {
+                        cancelSwipeDrag(true);
+                    }
+                }
             }
         }
         boolean consumed = swipeConsumed;
@@ -114,6 +126,8 @@ public class PlaybackWebView extends WebView {
                         ? "rejected (ineligible, pending, cancelled, axis or distance)" : direction));
                 if (consumed && !direction.isEmpty()) {
                     dispatchMediaSwipe(direction, swipeToken, swipeUrl);
+                } else {
+                    cancelSwipeDrag(true);
                 }
             }
             receivingSwipe = false;
@@ -188,6 +202,27 @@ public class PlaybackWebView extends WebView {
                 result -> logSwipe("JS swipe action: " + result));
     }
 
+    private void updateSwipeDrag() {
+        int width = getWidth() - getPaddingLeft() - getPaddingRight();
+        int height = getHeight() - getPaddingTop() - getPaddingBottom();
+        if (width <= 0 || height <= 0) {
+            cancelMediaSwipe("empty drag viewport");
+            return;
+        }
+        evaluateJavascript("(function(){if(location.href!=="
+                + MainActivity.jsStringLiteral(swipeUrl) + "){return;}"
+                + "if(window.__ssmusicNativeSwipeMove){window.__ssmusicNativeSwipeMove("
+                + swipeToken + "," + mediaSwipe.dragX() / width + ","
+                + mediaSwipe.dragY() / height + ");}})()", null);
+    }
+
+    private void cancelSwipeDrag(boolean settle) {
+        evaluateJavascript("(function(){if(location.href!=="
+                + MainActivity.jsStringLiteral(swipeUrl) + "){return;}"
+                + "if(window.__ssmusicNativeSwipeCancel){window.__ssmusicNativeSwipeCancel("
+                + swipeToken + "," + settle + ");}})()", null);
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         cancelMediaSwipe("view detached");
@@ -200,6 +235,8 @@ public class PlaybackWebView extends WebView {
         // Keep paused media available too, so notification Play can resume in the background.
         if (visibility == View.VISIBLE) {
             super.onWindowVisibilityChanged(visibility);
+        } else if (mediaSwipe != null) {
+            cancelMediaSwipe("window hidden");
         }
     }
 }

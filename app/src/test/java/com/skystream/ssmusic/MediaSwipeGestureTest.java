@@ -182,6 +182,29 @@ public class MediaSwipeGestureTest {
     }
 
     @Test
+    public void dragFeedbackRequiresEligibilityAndFollowsOnlyLockedAxis() {
+        MediaSwipeGesture gesture = new MediaSwipeGesture(12, 60);
+        long token = gesture.start(100, 100);
+        gesture.move(110, 105);
+        assertEquals(0f, gesture.dragX(), 0f);
+        assertEquals(0f, gesture.dragY(), 0f);
+        gesture.resolveEligibility(token, true);
+        gesture.move(140, 110);
+        assertEquals(40f, gesture.dragX(), 0f);
+        assertEquals(0f, gesture.dragY(), 0f);
+        gesture.finish();
+        assertEquals(0f, gesture.dragX(), 0f);
+
+        token = gesture.start(100, 100);
+        gesture.resolveEligibility(token, true);
+        gesture.move(110, 60);
+        assertEquals(0f, gesture.dragX(), 0f);
+        assertEquals(-40f, gesture.dragY(), 0f);
+        gesture.cancel();
+        assertEquals(0f, gesture.dragY(), 0f);
+    }
+
+    @Test
     public void viewCoordinatesNormalizeAcrossSizesAndPadding() {
         assertEquals(0.5f, MediaSwipeGesture.viewportFraction(540, 1080, 0, 0), 0.0001f);
         assertEquals(0.5f, MediaSwipeGesture.viewportFraction(180, 360, 0, 0), 0.0001f);

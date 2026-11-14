@@ -65,6 +65,14 @@ final class MediaSwipeGesture {
         return active && eligible && !direction.isEmpty();
     }
 
+    float dragX() {
+        return shouldIntercept() && ("left".equals(direction) || "right".equals(direction)) ? dx : 0;
+    }
+
+    float dragY() {
+        return shouldIntercept() && ("up".equals(direction) || "down".equals(direction)) ? dy : 0;
+    }
+
     boolean isAwaitingEligibility() {
         return active && !eligible;
     }
